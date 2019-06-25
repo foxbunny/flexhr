@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/foxbunny/flexhr.svg?branch=master)](https://travis-ci.org/foxbunny/flexhr)
+
 # FleXHR
 
 Flexible XHR library
