@@ -1,6 +1,6 @@
 {
   "name": "flexhr",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Flexible XHR library",
   "main": "dist/flexhr.js",
   "module": "dist/flexhr.mjs",
