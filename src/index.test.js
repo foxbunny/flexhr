@@ -189,6 +189,19 @@ describe('handleResponse', function () {
     expect(result).toEqual({data: 'foo'});
   });
 
+  test('handle 200 response with charset', async function () {
+    const handlers = {
+      onOK: jest.fn(identity),
+      onError: jest.fn(identity),
+    };
+    const resp = new Response('{"data": "foo"}', {
+      status: 200,
+      headers: {'Content-Type': 'application/json;chaset=utf8'},
+    });
+    await request.handleResponse(resp, handlers);
+    expect(handlers.onOK).toHaveBeenCalledWith({data: 'foo'});
+  })
+
   test('handle 200 response with on200', async function () {
     const handlers = {
       onOK: jest.fn(x => x),

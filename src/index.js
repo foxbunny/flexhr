@@ -190,7 +190,8 @@ function decodeBody(response) {
     return Promise.resolve({error: response.message});
   }
 
-  const contentType = response.headers.get('content-type') || 'text/plain';
+  const cTypeHeader = response.headers.get('content-type')
+  const contentType = cTypeHeader ? cTypeHeader.split(';')[0] : 'text/plain';
 
   if (response.status === 204) {
     return;
