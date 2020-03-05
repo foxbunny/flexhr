@@ -20,7 +20,7 @@ class ConnectionError extends Error {
     this.status = 0;
     this.ok = false;
   }
-};
+}
 
 /**
  * Add an XHR plugin
@@ -47,7 +47,7 @@ class ConnectionError extends Error {
  */
 export function addPlugin(fn) {
   plugins.push(fn);
-};
+}
 
 /**
  * Remove all plugins from the plugin stack
@@ -56,7 +56,7 @@ export function addPlugin(fn) {
  */
 export function __clearPlugins() {
   plugins.length = 0;
-};
+}
 
 /**
  * Convert parameters to appropriate request body
@@ -90,9 +90,7 @@ function encodeParams(params, headers) {
   else if (params instanceof FormData) {
     return params;
   }
-
-  return;
-};
+}
 
 /**
  * Perform an XHR request to a specified URL
@@ -228,5 +226,5 @@ export async function handleResponse(response, handlers) {
   const fallback = response.ok ? handlers.onOK : handlers.onError;
   const data = await decoder(response);
   return (handlers[`on${status}`] || fallback)(data);
-};
+}
 
