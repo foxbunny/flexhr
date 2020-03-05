@@ -110,7 +110,7 @@ describe('plugins', function () {
     function plugin(next) {
       return function (url, init) {
         return next('/api' + url, init);
-      }
+      };
     }
 
     request.addPlugin(plugin);
@@ -129,8 +129,9 @@ describe('plugins', function () {
         return next('/api' + url, init);
       };
     }
+
     function plugin2(next) {
-      return function(url, init) {
+      return function (url, init) {
         init.headers.append('Authorization', 'Bearer abcd1234');
         return next(url, init);
       };
@@ -155,11 +156,13 @@ describe('plugins', function () {
         return next('/api' + url, init);
       };
     }
+
     plugin1.id = 'apiUrl';
 
     function plugin2() {
       throw Error('Plugin 2 should never be used in this test');
-    };
+    }
+
     plugin2.id = 'auth';
 
     request.addPlugin(plugin1);
@@ -177,7 +180,9 @@ describe('plugins', function () {
 
 describe('handleResponse', function () {
 
-  const identity = function (x) { return x; };
+  const identity = function (x) {
+    return x;
+  };
 
   test('handle 200 response', async function () {
     const handlers = {
@@ -205,7 +210,7 @@ describe('handleResponse', function () {
     });
     await request.handleResponse(resp, handlers);
     expect(handlers.onOK).toHaveBeenCalledWith({data: 'foo'});
-  })
+  });
 
   test('handle 200 response with on200', async function () {
     const handlers = {

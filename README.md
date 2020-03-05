@@ -97,9 +97,10 @@ import {POST} from 'flexhr';
 
 You will notice that you do not have to say that you want it as JSON as that's
 the default. The `Content-Type: application/json` header is automatically added
-as well. We can opt out of this behavior by supplying our own request body as
-the `params` option, some custom request headers, and setting the `skipEncode`
-flag:
+as well. For payloads other than objects and arrays, the payload is used as is.
+The headers must be set appropriately if you are using some exotic payload.
+
+For `FormData` and `UrlSearchParams` object, no specific headers are added.
 
 ```javascript
 import {POST} from 'flexhr';
@@ -109,10 +110,7 @@ formData.append('name', 'John Doe');
 formData.append('email', 'doe@example.com');
 
 (async function () {
-  const resp = await POST('/api/users', {
-    params: formData,
-    headers: {'content-type': 'application/x-www-form-urlencoded'}
-  });
+  const resp = await POST('/api/users', { params: formData });
 })();
 ```
 

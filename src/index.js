@@ -64,19 +64,10 @@ export function __clearPlugins() {
  * The rules for conversion are as follows:
  *
  * - Any plain objects and arrays are converted to JSON.
- * - Any `FormData` objects are used as is.
- * - Any `URLSearchParams` objects are used as is.
- * - Any form elements are converted to either JSON or `UrlSearchParams` or
- *   `FormData` based on the `enctype` attribute (you can use
- *   'application/json', 'application/x-www-form-urlencoded', and
- *   'applicaiton/json'; default is 'application/x-www-form-urlencoded').
- * - Anything else is coerced to string and treated as text body.
+ * - Any other value is used as is, and considered to be in a format that
+ *  `fetch()` will accept as a request body.
  *
- * For JSON payload, the 'application/json' content type is set. For
- * `URLSearchParams`, content type is set to
- * 'application/x-www-form-urlencoded'. For everything else, the content type
- * is not set requiring either the caller to set it, or delegating to the fetch
- * API.
+ * For JSON payload, the 'application/json' content type is set.
  */
 function encodeParams(params, headers) {
   if (
@@ -86,7 +77,7 @@ function encodeParams(params, headers) {
     headers.set('Content-Type', 'application/json');
     return JSON.stringify(params);
   }
-  return params
+  return params;
 }
 
 /**
@@ -185,7 +176,7 @@ function decodeBody(response) {
     return Promise.resolve({error: response.message});
   }
 
-  const cTypeHeader = response.headers.get('content-type')
+  const cTypeHeader = response.headers.get('content-type');
   const contentType = cTypeHeader ? cTypeHeader.split(';')[0] : 'text/plain';
 
   if (response.status === 204) {
