@@ -86,10 +86,7 @@ function encodeParams(params, headers) {
     headers.set('Content-Type', 'application/json');
     return JSON.stringify(params);
   }
-
-  else if (params instanceof FormData) {
-    return params;
-  }
+  return params
 }
 
 /**

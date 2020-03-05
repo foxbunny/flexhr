@@ -74,6 +74,11 @@ describe.each([
       const u = new URLSearchParams();
       u.append('param', 'val');
       await request[method]('/foo/bar', {params: u});
+      expect(mockFetch).toHaveBeenCalledWith('/foo/bar', {
+        body: u,
+        headers: new Headers({}),
+        method,
+      });
     });
 
     test('headers', async function () {
