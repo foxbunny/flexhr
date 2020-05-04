@@ -1,6 +1,6 @@
 import {stringify} from 'query-string';
 
-const plugins = [];
+var plugins = [];
 
 /**
  * Connection error object
@@ -10,17 +10,19 @@ const plugins = [];
  * like `ok` and `status` which allow us to treat it as a `Response` object
  * when handling errors.
  *
- * The original error raised by `fetch()` is passed to the constructor, and is
+ * The original error raised by `fetch()` is passed to the varructor, and is
  * kept as the `error` property.
  */
-class ConnectionError extends Error {
-  constructor(originalError) {
-    super(originalError.message);
-    this.error = originalError;
-    this.status = 0;
-    this.ok = false;
-  }
+function ConnectionError(originalError) {
+  this.error = originalError;
+  this.message = originalError.message;
+  this.status = 0;
+  this.ok = false;
+  this.stack = (Error()).stack
 }
+
+ConnectionError.prototype = Error()
+
 
 /**
  * Add an XHR plugin
@@ -111,7 +113,7 @@ function encodeParams(params, headers) {
  * methods.
  */
 function request(method, url, options = {}) {
-  const init = {
+  var init = {
     method,
   };
 
@@ -134,7 +136,7 @@ function request(method, url, options = {}) {
   }
 
   // Decorate the fetch function with plugins
-  const fetcher = applicablePlugins.reduce(function (next, plugin) {
+  var fetcher = applicablePlugins.reduce(function (next, plugin) {
     return plugin(next);
   }, async function (url, init) {
     try {
@@ -152,17 +154,17 @@ function request(method, url, options = {}) {
  */
 export function GET(url, options = {}) {
   if (options.params) {
-    url += `?${stringify(options.params)}`;
+    url += '?' + stringify(options.params);
     options = {...options, params: undefined};
   }
 
   return request('GET', url, options);
 }
 
-export const POST = request.bind(null, 'POST');
-export const PUT = request.bind(null, 'PUT');
-export const PATCH = request.bind(null, 'PATCH');
-export const DELETE = request.bind(null, 'DELETE');
+export var POST = request.bind(null, 'POST');
+export var PUT = request.bind(null, 'PUT');
+export var PATCH = request.bind(null, 'PATCH');
+export var DELETE = request.bind(null, 'DELETE');
 
 /**
  * Return a Promise that resolves to decoded response body
@@ -176,8 +178,8 @@ function decodeBody(response) {
     return Promise.resolve({error: response.message});
   }
 
-  const cTypeHeader = response.headers.get('content-type');
-  const contentType = cTypeHeader ? cTypeHeader.split(';')[0] : 'text/plain';
+  var cTypeHeader = response.headers.get('content-type');
+  var contentType = cTypeHeader ? cTypeHeader.split(';')[0] : 'text/plain';
 
   if (response.status === 204) {
     return;
@@ -209,10 +211,9 @@ function decodeBody(response) {
  * plain-text based on the `Content-Type` header.
  */
 export async function handleResponse(response, handlers) {
-  const decoder = handlers.decode || decodeBody;
-  const status = response.status;
-  const fallback = response.ok ? handlers.onOK : handlers.onError;
-  const data = await decoder(response);
-  return (handlers[`on${status}`] || fallback)(data);
+  var decoder = handlers.decode || decodeBody;
+  var status = response.status;
+  var fallback = response.ok ? handlers.onOK : handlers.onError;
+  var data = await decoder(response);
+  return (handlers['on' + status] || fallback)(data);
 }
-
