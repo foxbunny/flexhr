@@ -1,4 +1,3 @@
-import babelPlugin from '@rollup/plugin-babel'
 import pkg from './package.json';
 
 export default [
@@ -8,6 +7,5 @@ export default [
 		output: [
 			{ file: pkg.main, format: 'cjs' },
 		],
-		plugins: [babelPlugin({ babelHelpers: 'bundled' })]
 	},
 ];
