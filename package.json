@@ -1,6 +1,6 @@
 {
   "name": "flexhr",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Flexible XHR library",
   "main": "dist/flexhr.js",
   "repository": "https://github.com/foxbunny/flexhr.git",
