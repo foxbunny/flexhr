@@ -7,9 +7,7 @@
   "author": "Hajime Yamasaki Vukelic <hayavuk@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "jest",
-    "build": "rollup -c",
-    "prepublish": "yarn run build"
+    "test": "jest"
   },
   "files": [
     "dist"
@@ -21,8 +19,7 @@
     "@babel/preset-env": "^7.4.5",
     "core-js": "2",
     "cross-fetch": "^3.0.3",
-    "jest": "^24.8.0",
-    "rollup": "^1.14.2"
+    "jest": "^24.8.0"
   },
   "dependencies": {
     "query-string": "^6.6.0"

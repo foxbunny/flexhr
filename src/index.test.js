@@ -1,5 +1,5 @@
 import 'cross-fetch/polyfill';
-import * as request from '.';
+import * as flexhr from '.';
 
 const defaultResponse = new Response('response', {status: 200});
 const mockFetch = jest.fn(async function () {
@@ -16,12 +16,12 @@ afterEach(function () {
 
 describe('request.GET', function () {
   test('response', async function () {
-    const resp = await request.GET('/foo/bar');
+    const resp = await flexhr.GET('/foo/bar');
     expect(resp).toBe(defaultResponse);
   });
 
   test('parameters', async function () {
-    await request.GET('/foo/bar', {params: {param: 'val'}});
+    await flexhr.GET('/foo/bar', {params: {param: 'val'}});
     expect(mockFetch).toHaveBeenCalledWith('/foo/bar?param=val', {
       headers: new Headers({}),
       method: 'GET',
@@ -29,7 +29,7 @@ describe('request.GET', function () {
   });
 
   test('headers', async function () {
-    await request.GET('/foo/bar', {headers: {Authorization: 'Bearer 1234'}});
+    await flexhr.GET('/foo/bar', {headers: {Authorization: 'Bearer 1234'}});
     expect(mockFetch).toHaveBeenCalledWith('/foo/bar', {
       headers: new Headers({Authorization: 'Bearer 1234'}),
       method: 'GET',
@@ -46,12 +46,12 @@ describe.each([
   'request.%s',
   function (method) {
     test('response', async function () {
-      const resp = await request[method]('/foo/bar');
+      const resp = await flexhr[method]('/foo/bar');
       expect(resp).toBe(defaultResponse);
     });
 
     test('parameters', async function () {
-      await request[method]('/foo/bar', {params: {param: 'val'}});
+      await flexhr[method]('/foo/bar', {params: {param: 'val'}});
       expect(mockFetch).toHaveBeenCalledWith('/foo/bar', {
         body: '{"param":"val"}',
         headers: new Headers({'content-type': 'application/json'}),
@@ -62,7 +62,7 @@ describe.each([
     test('FormData as paramters', async function () {
       const f = new FormData();
       f.append('param', 'val');
-      await request[method]('/foo/bar', {params: f});
+      await flexhr[method]('/foo/bar', {params: f});
       expect(mockFetch).toHaveBeenCalledWith('/foo/bar', {
         body: f,
         headers: new Headers({}),
@@ -73,7 +73,7 @@ describe.each([
     test('URLSearchParams as paramters', async function () {
       const u = new URLSearchParams();
       u.append('param', 'val');
-      await request[method]('/foo/bar', {params: u});
+      await flexhr[method]('/foo/bar', {params: u});
       expect(mockFetch).toHaveBeenCalledWith('/foo/bar', {
         body: u,
         headers: new Headers({}),
@@ -82,7 +82,7 @@ describe.each([
     });
 
     test('headers', async function () {
-      await request[method](
+      await flexhr[method](
         '/foo/bar',
         {headers: {Authorization: 'Bearer 1234'}},
       );
@@ -97,13 +97,13 @@ describe.each([
 describe('plugins', function () {
   beforeEach(function () {
     // Add a plugin that replaces the global fetch with a mock one
-    request.addPlugin(function () {
+    flexhr.addPlugin(function () {
       return mockFetch;
     });
   });
 
   afterEach(function () {
-    request.__clearPlugins();
+    flexhr.__clearPlugins();
   });
 
   test('use a single plugin', async function () {
@@ -113,9 +113,9 @@ describe('plugins', function () {
       };
     }
 
-    request.addPlugin(plugin);
+    flexhr.addPlugin(plugin);
 
-    await request.GET('/test');
+    await flexhr.GET('/test');
 
     expect(mockFetch).toHaveBeenCalledWith('/api/test', {
       headers: new Headers({}),
@@ -137,10 +137,10 @@ describe('plugins', function () {
       };
     }
 
-    request.addPlugin(plugin1);
-    request.addPlugin(plugin2);
+    flexhr.addPlugin(plugin1);
+    flexhr.addPlugin(plugin2);
 
-    await request.GET('/test');
+    await flexhr.GET('/test');
 
     expect(mockFetch).toHaveBeenCalledWith('/api/test', {
       headers: new Headers({
@@ -165,10 +165,10 @@ describe('plugins', function () {
 
     plugin2.id = 'auth';
 
-    request.addPlugin(plugin1);
-    request.addPlugin(plugin2);
+    flexhr.addPlugin(plugin1);
+    flexhr.addPlugin(plugin2);
 
-    await request.GET('/test', {skipPlugins: ['auth']});
+    await flexhr.GET('/test', {skipPlugins: ['auth']});
 
     expect(mockFetch).toHaveBeenCalledWith('/api/test', {
       headers: new Headers({}),
@@ -193,7 +193,7 @@ describe('handleResponse', function () {
       status: 200,
       headers: {'Content-Type': 'application/json'},
     });
-    const result = await request.handleResponse(resp, handlers);
+    const result = await flexhr.handleResponse(resp, handlers);
     expect(handlers.onOK).toHaveBeenCalledWith({data: 'foo'});
     expect(handlers.onError).not.toHaveBeenCalled();
     expect(result).toEqual({data: 'foo'});
@@ -208,7 +208,7 @@ describe('handleResponse', function () {
       status: 200,
       headers: {'Content-Type': 'application/json;chaset=utf8'},
     });
-    await request.handleResponse(resp, handlers);
+    await flexhr.handleResponse(resp, handlers);
     expect(handlers.onOK).toHaveBeenCalledWith({data: 'foo'});
   });
 
@@ -222,7 +222,7 @@ describe('handleResponse', function () {
       status: 200,
       headers: {'Content-Type': 'application/json'},
     });
-    await request.handleResponse(resp, handlers);
+    await flexhr.handleResponse(resp, handlers);
     expect(handlers.onOK).not.toHaveBeenCalled();
     expect(handlers.on200).toHaveBeenCalledWith({data: 'foo'});
   });
@@ -233,7 +233,7 @@ describe('handleResponse', function () {
       onError: jest.fn(x => x),
     };
     const resp = new Response(null, {status: 204});
-    const result = await request.handleResponse(resp, handlers);
+    const result = await flexhr.handleResponse(resp, handlers);
     expect(handlers.onOK).toHaveBeenCalledWith(undefined);
     expect(handlers.onError).not.toHaveBeenCalled();
     expect(result).toBe(undefined);
@@ -246,7 +246,7 @@ describe('handleResponse', function () {
       onError: jest.fn(x => x),
     };
     const resp = new Response(null, {status: 204});
-    await request.handleResponse(resp, handlers);
+    await flexhr.handleResponse(resp, handlers);
     expect(handlers.onOK).not.toHaveBeenCalled();
     expect(handlers.on204).toHaveBeenCalledWith(undefined);
   });
@@ -260,7 +260,7 @@ describe('handleResponse', function () {
       status: 400,
       headers: {'Content-Type': 'application/json'},
     });
-    const result = await request.handleResponse(resp, handlers);
+    const result = await flexhr.handleResponse(resp, handlers);
     expect(handlers.onError).toHaveBeenCalledWith({error: 'omg'});
     expect(handlers.onOK).not.toHaveBeenCalled();
     expect(result).toEqual({error: 'omg'});
@@ -276,7 +276,7 @@ describe('handleResponse', function () {
       status: 400,
       headers: {'Content-Type': 'application/json'},
     });
-    await request.handleResponse(resp, handlers);
+    await flexhr.handleResponse(resp, handlers);
     expect(handlers.on400).toHaveBeenCalledWith({error: 'omg'});
     expect(handlers.onError).not.toHaveBeenCalled();
   });
@@ -287,7 +287,7 @@ describe('handleResponse', function () {
       onError: jest.fn(x => x),
     };
     const resp = new Response('Server error', {status: 400});
-    const result = await request.handleResponse(resp, handlers);
+    const result = await flexhr.handleResponse(resp, handlers);
     expect(handlers.onError).toHaveBeenCalledWith('Server error');
     expect(handlers.onOK).not.toHaveBeenCalled();
     expect(result).toEqual('Server error');

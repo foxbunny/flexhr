@@ -1,4 +1,5 @@
-import {stringify} from 'query-string';
+const qs = require('query-string');
+const flexhr = module.exports
 
 var plugins = [];
 
@@ -47,7 +48,7 @@ ConnectionError.prototype = Error()
  *       };
  *     }
  */
-export function addPlugin(fn) {
+flexhr.addPlugin = function (fn) {
   plugins.push(fn);
 }
 
@@ -56,7 +57,7 @@ export function addPlugin(fn) {
  *
  * This function is intended mostly for testing purposes.
  */
-export function __clearPlugins() {
+flexhr.__clearPlugins = function () {
   plugins.length = 0;
 }
 
@@ -112,7 +113,9 @@ function encodeParams(params, headers) {
  * value of the params is used as the request body for POST/PUT/PATCH/DELETE
  * methods.
  */
-function request(method, url, options = {}) {
+flexhr.request = function (method, url, options) {
+  options = options || {}
+
   var init = {
     method,
   };
@@ -136,15 +139,16 @@ function request(method, url, options = {}) {
   }
 
   // Decorate the fetch function with plugins
-  var fetcher = applicablePlugins.reduce(function (next, plugin) {
-    return plugin(next);
-  }, async function (url, init) {
-    try {
-      return await fetch(url, init);
-    } catch (e) {
-      return Promise.resolve(new ConnectionError(e));
-    }
-  });
+  var fetcher = applicablePlugins.reduce(
+    function (next, plugin) {
+      return plugin(next);
+    },
+    function (url, init) {
+      return fetch(url, init)
+        .catch(function (error) {
+          return new ConnectionError(error);
+        });
+    });
 
   return fetcher(url, init);
 }
@@ -152,19 +156,21 @@ function request(method, url, options = {}) {
 /**
  * Shorthand for `request()` for making GET requests
  */
-export function GET(url, options = {}) {
+flexhr.GET = function (url, options) {
+  options = options || {}
+
   if (options.params) {
-    url += '?' + stringify(options.params);
-    options = {...options, params: undefined};
+    url += '?' + qs.stringify(options.params);
+    options = Object.assign({}, options, {params: undefined});
   }
 
-  return request('GET', url, options);
+  return flexhr.request('GET', url, options);
 }
 
-export var POST = request.bind(null, 'POST');
-export var PUT = request.bind(null, 'PUT');
-export var PATCH = request.bind(null, 'PATCH');
-export var DELETE = request.bind(null, 'DELETE');
+flexhr.POST = flexhr.request.bind(null, 'POST');
+flexhr.PUT = flexhr.request.bind(null, 'PUT');
+flexhr.PATCH = flexhr.request.bind(null, 'PATCH');
+flexhr.DELETE = flexhr.request.bind(null, 'DELETE');
 
 /**
  * Return a Promise that resolves to decoded response body
@@ -182,7 +188,7 @@ function decodeBody(response) {
   var contentType = cTypeHeader ? cTypeHeader.split(';')[0] : 'text/plain';
 
   if (response.status === 204) {
-    return;
+    return Promise.resolve();
   }
 
   if (contentType === 'application/json') {
@@ -210,10 +216,12 @@ function decodeBody(response) {
  * response payload. By default, the response is decoded as either JSON or
  * plain-text based on the `Content-Type` header.
  */
-export async function handleResponse(response, handlers) {
+flexhr.handleResponse = function (response, handlers) {
   var decoder = handlers.decode || decodeBody;
   var status = response.status;
   var fallback = response.ok ? handlers.onOK : handlers.onError;
-  var data = await decoder(response);
-  return (handlers['on' + status] || fallback)(data);
+  return decoder(response)
+    .then(function (data) {
+      return (handlers['on' + status] || fallback)(data);
+    })
 }
