@@ -20,12 +20,13 @@
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@rollup/plugin-babel": "^5.0.0",
-    "core-js": "2",
+    "core-js": "^3.6.5",
     "cross-fetch": "^3.0.3",
     "jest": "^24.8.0",
     "rollup": "^1.14.2"
   },
   "dependencies": {
-    "query-string": "^6.6.0"
+    "query-string": "^6.6.0",
+    "regenerator-runtime": "^0.13.5"
   }
 }
