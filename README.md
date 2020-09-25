@@ -114,6 +114,22 @@ formData.append('email', 'doe@example.com');
 })();
 ```
 
+### Creating request objects without making requests
+
+It is possible to create a request object without actually making a request. 
+This is done by passing the `noFetch` option.
+
+```javascript
+import {GET} from 'flexhr';
+
+(async function () {
+  let request = await GET('/api/users', { noFetch: true })
+})();
+```
+
+Note that when using the `noFetch` function, no plugins are applied to the 
+request objet.
+
 ### Handling responses
 
 Handling responses can be done in many ways, and this is why this part of the

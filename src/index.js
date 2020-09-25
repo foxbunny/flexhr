@@ -138,6 +138,10 @@ flexhr.request = function (method, url, options) {
     });
   }
 
+  if (options.noFetch) {
+    return new Request(url, init)
+  }
+
   // Decorate the fetch function with plugins
   let fetcher = applicablePlugins.reduce(
     function (next, plugin) {
