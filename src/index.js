@@ -1,7 +1,7 @@
 const qs = require('query-string');
 const flexhr = module.exports
 
-var plugins = [];
+let plugins = [];
 
 /**
  * Connection error object
@@ -116,7 +116,7 @@ function encodeParams(params, headers) {
 flexhr.request = function (method, url, options) {
   options = options || {}
 
-  var init = {
+  let init = {
     method,
   };
 
@@ -139,7 +139,7 @@ flexhr.request = function (method, url, options) {
   }
 
   // Decorate the fetch function with plugins
-  var fetcher = applicablePlugins.reduce(
+  let fetcher = applicablePlugins.reduce(
     function (next, plugin) {
       return plugin(next);
     },
@@ -184,8 +184,8 @@ function decodeBody(response) {
     return Promise.resolve({error: response.message});
   }
 
-  var cTypeHeader = response.headers.get('content-type');
-  var contentType = cTypeHeader ? cTypeHeader.split(';')[0] : 'text/plain';
+  let cTypeHeader = response.headers.get('content-type');
+  let contentType = cTypeHeader ? cTypeHeader.split(';')[0] : 'text/plain';
 
   if (response.status === 204) {
     return Promise.resolve();
@@ -217,9 +217,9 @@ function decodeBody(response) {
  * plain-text based on the `Content-Type` header.
  */
 flexhr.handleResponse = function (response, handlers) {
-  var decoder = handlers.decode || decodeBody;
-  var status = response.status;
-  var fallback = response.ok ? handlers.onOK : handlers.onError;
+  let decoder = handlers.decode || decodeBody;
+  let status = response.status;
+  let fallback = response.ok ? handlers.onOK : handlers.onError;
   return decoder(response)
     .then(function (data) {
       return (handlers['on' + status] || fallback)(data);
