@@ -2,7 +2,7 @@
   "name": "flexhr",
   "version": "2.1.1",
   "description": "Flexible XHR library",
-  "main": "dist/flexhr.js",
+  "main": "dist/index.js",
   "repository": "https://github.com/foxbunny/flexhr.git",
   "author": "Hajime Yamasaki Vukelic <hayavuk@gmail.com>",
   "license": "MIT",
