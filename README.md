@@ -122,9 +122,7 @@ This is done by passing the `noFetch` option.
 ```javascript
 import {GET} from 'flexhr';
 
-(async function () {
-  let request = await GET('/api/users', { noFetch: true })
-})();
+let request = GET('/api/users', { noFetch: true })
 ```
 
 Note that when using the `noFetch` function, no plugins are applied to the 

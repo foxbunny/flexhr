@@ -176,20 +176,20 @@ describe('plugins', function () {
     })
   })
 
-  test('return request only', async function () {
-    let r = await flexhr.GET('/test', {noFetch: true})
+  test('return request only', function () {
+    let r = flexhr.GET('/test', {noFetch: true})
 
     expect(r).toBeInstanceOf(Request)
     expect(r.url).toBe('/test')
     expect(mockFetch).not.toHaveBeenCalled()
   })
 
-  test('noFetch option does not trigger plugins', async function () {
+  test('noFetch option does not trigger plugins', function () {
     let plugin = jest.fn()
 
     flexhr.addPlugin(plugin)
 
-    let r = await flexhr.GET('/test', {noFetch: true})
+    let r = flexhr.GET('/test', {noFetch: true})
 
     expect(plugin).not.toHaveBeenCalled()
   })
